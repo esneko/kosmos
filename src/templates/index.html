@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        var socket = io('/cosmos-db-table', {
+            transports: ['websocket', 'polling']
+        });
+
+        socket.on('connect', function() {});
+        socket.on('new_message', function(data) {
+            console.dir(data.message);
+            $('#console').append(`${data.message}\n`);
+        })
+
+        socket.emit('start', {});
+
+        $('#runAgainButton').click(function() {
+            $('#console').empty();
+            socket.emit('start', {});
+        })
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<pre id="console" class="bg-light text-dark fw-light font-monospace mt-5 p-2">
+</pre>
+
+<section class="d-flex justify-content-center">
+    <div class="list-group py-2">
+    <button id="runAgainButton" class="list-group-item list-group-item-action @(_runAgainEnabled ? "" : "disabled") active" aria-current="true" @onclick="RunAgain">
+        <i class="bi bi-arrow-clockwise me-2"></i>
+        Run again
+    </button>
+    <a href="https://learn.microsoft.com/azure/cosmos-db/table/quickstart-python#code-examples" class="list-group-item list-group-item-action" target="_blank">
+        <i class="bi bi-book me-2"></i>
+        Walk through the code for this sample application
+        <small class="ms-1 align-top">            
+            <i class="bi bi-box-arrow-up-right" style="font-size: 0.65rem;"></i>
+        </small>
+    </a>
+    <a href="https://learn.microsoft.com/azure/cosmos-db/table/" class="list-group-item list-group-item-action" target="_blank">
+        <i class="bi bi-lightbulb me-2"></i>
+        Learn more about Azure Cosmos DB for Table
+        <small class="ms-1 align-top">            
+            <i class="bi bi-box-arrow-up-right" style="font-size: 0.65rem;"></i>
+        </small>
+    </a>
+</div>
+</section>
+{% endblock %}
